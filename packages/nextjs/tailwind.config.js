@@ -8,57 +8,37 @@ module.exports = {
   daisyui: {
     themes: [
       {
-        light: {
-          primary: "#93BBFB",
-          "primary-content": "#212638",
-          secondary: "#DAE8FF",
-          "secondary-content": "#212638",
-          accent: "#93BBFB",
-          "accent-content": "#212638",
-          neutral: "#212638",
-          "neutral-content": "#ffffff",
-          "base-100": "#ffffff",
-          "base-200": "#f4f8ff",
-          "base-300": "#DAE8FF",
-          "base-content": "#212638",
-          info: "#93BBFB",
-          success: "#34EEB6",
-          warning: "#FFCF72",
-          error: "#FF8863",
+        givvest: {
+          primary: "#1E40AF", // Strong blue for primary buttons and elements
+          "primary-content": "#F9FBFF", // White content on primary elements
 
-          "--rounded-btn": "9999rem",
+          secondary: "#FBBF24", // Bright yellow for secondary elements
+          "secondary-content": "#212638", // Dark content on secondary elements
 
-          ".tooltip": {
-            "--tooltip-tail": "6px",
-          },
-          ".link": {
-            textUnderlineOffset: "2px",
-          },
-          ".link:hover": {
-            opacity: "80%",
-          },
-        },
-      },
-      {
-        dark: {
-          primary: "#212638",
-          "primary-content": "#F9FBFF",
-          secondary: "#323f61",
-          "secondary-content": "#F9FBFF",
-          accent: "#4969A6",
-          "accent-content": "#F9FBFF",
-          neutral: "#F9FBFF",
-          "neutral-content": "#385183",
-          "base-100": "#385183",
-          "base-200": "#2A3655",
-          "base-300": "#212638",
-          "base-content": "#F9FBFF",
-          info: "#385183",
-          success: "#34EEB6",
-          warning: "#FFCF72",
-          error: "#FF8863",
+          accent: "#10B981", // Green accent for highlighted elements
+          "accent-content": "#ffffff", // White content on accent elements
 
-          "--rounded-btn": "9999rem",
+          neutral: "#1F2937", // Dark gray for neutral elements
+          "neutral-content": "#ffffff", // White content on neutral elements
+
+          "base-100": "#171717", // Very dark background for better readability
+          "base-200": "#1F1F1F", // Slightly lighter dark background
+          "base-300": "#2A2A2A", // Even lighter dark background
+          "base-content": "#F9FBFF", // Light content for base elements
+
+          info: "#66c7ff", // Light blue for informational elements
+          success: "#87cf3a", // Green for success elements
+          warning: "#e1d460", // Yellow for warning elements
+          error: "#ff6b6b", // Red for error elements
+
+          "--rounded-box": "0rem", // Border radius for cards and other large boxes
+          "--rounded-btn": "0rem", // Border radius for buttons
+          "--rounded-badge": "1.9rem", // Border radius for badges
+          "--animation-btn": "0.25s", // Duration of animation when you click on button
+          "--animation-input": "0.2s", // Duration of animation for inputs like checkbox, toggle, radio, etc
+          "--btn-text-case": "uppercase", // Text case for buttons
+          "--navbar-padding": "0.5rem", // Padding for navbar
+          "--border-btn": "1px", // Border width of buttons
 
           ".tooltip": {
             "--tooltip-tail": "6px",
