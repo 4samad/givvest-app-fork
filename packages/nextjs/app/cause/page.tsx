@@ -26,7 +26,7 @@ const Home: NextPage = () => {
                 <div className="mt-8 lg:mt-2 card-actions justify-end">
                   <label className="input inline-flex items-center gap-2 max-w-40">
                     $
-                    <input type="text" placeholder="Enter amount" className="input max-w-full placeholder:text-sm"/>
+                    <input type="text" placeholder="Enter amount" className="input max-w-full placeholder:text-sm" />
                   </label>
                   <button className="btn btn-primary">Donate Now</button>
                 </div>
