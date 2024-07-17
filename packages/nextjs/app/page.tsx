@@ -6,9 +6,14 @@ import type { NextPage } from "next";
 const Home: NextPage = () => {
   return (
     <>
-      <h1 className="h1 m-8">
-        Givvest app here:<Link href="/explore">Explore</Link>
-      </h1>
+      <div className="flex items-center justify-center pt-48">
+        <h1 className="h1 text-center">
+          Nothing here for now. See:
+          <Link className="ml-2 btn" href="/explore">
+            Explore causes
+          </Link>
+        </h1>
+      </div>
     </>
   );
 };
