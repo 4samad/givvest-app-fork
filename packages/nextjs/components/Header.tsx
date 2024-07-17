@@ -39,8 +39,8 @@ export const HeaderMenuLinks = () => {
               href={href}
               passHref
               className={`${
-                isActive ? "bg-inherit" : "opacity-80"
-              } py-4 hover:opacity-100 px-3 text-4xl lg:text-sm gap-2 grid grid-flow-col`}
+                isActive ? "" : "opacity-70"
+              } py-4 hover:opacity-100 hover:bg-transparent px-3 text-4xl lg:text-sm gap-2 grid grid-flow-col`}
             >
               {icon}
               <span>{label}</span>
@@ -69,7 +69,7 @@ export const Header = () => {
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
-            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-base-200" : "hover:bg-transparent"}`}
+            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "opacity-50" : ""}`}
             onClick={() => {
               setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
             }}
