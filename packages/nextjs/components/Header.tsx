@@ -23,6 +23,10 @@ export const menuLinks: HeaderMenuLink[] = [
     label: "Explore Causes",
     href: "/explore",
   },
+  {
+    label: "My Profile",
+    href: "/profile",
+  },
   // Add menu items here { label, href, icon }
 ];
 
