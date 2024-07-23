@@ -16,7 +16,7 @@ const Home: NextPage = () => {
         <div className="max-w-7xl m-auto flex gap-8 flex-wrap justify-center">
           <div className="card bg-base-200 shadow-xl">
             <figure>
-              <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" />
+              <img src="https://i.imgur.com/MfK4cVF.jpeg" alt="Shoes" />
             </figure>
             <div className="card-body">
               <p>If a dog chews shoes whose shoes does he choose?If a dog chews shoes whose shoes does he choose?</p>
