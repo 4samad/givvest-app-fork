@@ -47,7 +47,9 @@ export const CauseNFT = ({ causeId }: { causeId: number }) => {
           value={Number(amountRaised)}
           max={Number(amountNeeded)}
         ></progress>
-        <p className="text-sm">{Number(amountRaised)}ETH of {Number(amountNeeded)}ETH</p>
+        <p className="text-sm">
+          {Number(amountRaised)}ETH of {Number(amountNeeded)}ETH
+        </p>
         <div className="card-actions justify-end">
           <button className="btn btn-primary">Donate Now</button>
         </div>
