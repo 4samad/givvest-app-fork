@@ -20,6 +20,7 @@ const deployGivvest: DeployFunction = async function (hre: HardhatRuntimeEnviron
     You can run the `yarn account` command to check your balance in every network.
   */
   const { deployer } = await hre.getNamedAccounts();
+  console.log("deployer: ", deployer);
   const { deploy, get } = hre.deployments;
   const ethers = hre.ethers;
 
