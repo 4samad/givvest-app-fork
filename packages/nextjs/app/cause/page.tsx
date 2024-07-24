@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { NextPage } from "next";
 
 const Home: NextPage = () => {
@@ -16,7 +17,7 @@ const Home: NextPage = () => {
         <div className="max-w-7xl m-auto flex gap-8 flex-wrap justify-center">
           <div className="card bg-base-200 shadow-xl">
             <figure>
-              <img src="https://i.imgur.com/MfK4cVF.jpeg" alt="Shoes" />
+              <Image src="https://i.imgur.com/MfK4cVF.jpeg" alt="Shoes" width={800} height={480} />
             </figure>
             <div className="card-body">
               <p>If a dog chews shoes whose shoes does he choose?If a dog chews shoes whose shoes does he choose?</p>
