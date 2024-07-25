@@ -3,10 +3,10 @@
 import { CauseNFTsList } from "./_components/CauseNFTsList";
 import type { NextPage } from "next";
 
-const Home: NextPage = () => {
+const Explore: NextPage = () => {
   return (
     <>
-      <div className="hero py-20">
+      <div className="hero py-16">
         <div className="hero-content text-center">
           <div className="max-w-md">
             <h1 className="text-5xl font-bold">Explore Causes</h1>
@@ -20,4 +20,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Explore;

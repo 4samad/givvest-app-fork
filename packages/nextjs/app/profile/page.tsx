@@ -4,10 +4,10 @@ import { DonationNFTs } from "./_components/DonationNFTs";
 import { GivvestCoinBalance } from "./_components/GivvestCoinBalance";
 import type { NextPage } from "next";
 
-const Home: NextPage = () => {
+const Profile: NextPage = () => {
   return (
     <>
-      <div className="hero py-20">
+      <div className="hero py-16">
         <div className="hero-content text-center">
           <div className="max-w-md">
             <h1 className="text-5xl font-bold">My Donations</h1>
@@ -26,4 +26,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Profile;
