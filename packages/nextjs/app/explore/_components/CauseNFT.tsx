@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 interface CauseMetaData {
@@ -73,12 +74,7 @@ export const CauseNFT = ({ causeId }: { causeId: number }) => {
   return (
     <div className="card bg-base-200 w-96 shadow-xl">
       <figure className="relative w-full h-60 overflow-hidden">
-        <Image
-          src={causeMetaData.image.replace("ipfs://", "https://ipfs.io/ipfs/")}
-          alt={causeMetaData.title}
-          layout="fill"
-          objectFit="cover"
-        />
+        <Image src={causeMetaData.image} alt={causeMetaData.title} layout="fill" objectFit="cover" />
       </figure>
       <div className="card-body">
         <h2 className="card-title">{causeMetaData.title}</h2>
@@ -89,7 +85,9 @@ export const CauseNFT = ({ causeId }: { causeId: number }) => {
           {amountRaised}ETH of {amountNeeded}ETH
         </p>
         <div className="card-actions justify-end">
-          <button className="btn btn-primary">Donate Now</button>
+          <Link href={`/explore/${causeId}`} className="btn btn-primary">
+            Learn more
+          </Link>
         </div>
       </div>
     </div>
