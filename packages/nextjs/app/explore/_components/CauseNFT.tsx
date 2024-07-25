@@ -65,7 +65,7 @@ export const CauseNFT = ({ causeId }: { causeId: number }) => {
   };
 
   // Utility function to truncate wallet addresses
-  const truncateAddress = (address: `0x${string}` | undefined, startLength = 6, endLength = 4) => {
+  const truncateAddress = (address: string | undefined, startLength = 6, endLength = 4) => {
     if (!address) return "";
     return `${address.slice(0, startLength)}...${address.slice(-endLength)}`;
   };
