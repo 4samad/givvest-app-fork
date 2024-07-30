@@ -28,7 +28,6 @@ export const Donate = ({ causeId }: { causeId: number }) => {
       );
     } catch (e) {
       console.error("Error processing donation", e);
-      alert("Transaction Failed");
       setIsProcessing(false);
     }
   };
