@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { MakePermanentButton } from "./MakePermanentButton";
 import { useAccount } from "wagmi";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
@@ -125,12 +126,16 @@ export const DonationNFT = ({ tokenId }: { tokenId: number }) => {
               className="h-8 rounded-full hover:bg-[rgba(255,255,255,0.06)]"
             />
             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-              <li>
-                <button>Make Permanent</button>
-              </li>
-              <li>
-                <button>List for redemption</button>
-              </li>
+              {!isPermanent && (
+                <>
+                  <li>
+                    <MakePermanentButton tokenId={tokenId} />
+                  </li>
+                  <li>
+                    <button>List for redemption</button>
+                  </li>
+                </>
+              )}
               <li>
                 <Link href={`/explore/${causeId}`}>See the cause</Link>
               </li>
