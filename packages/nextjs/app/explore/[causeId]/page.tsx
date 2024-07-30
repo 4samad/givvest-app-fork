@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Donate } from "./_components/Donate";
 import type { NextPage } from "next";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { DonateButton } from "./_components/DonateButton";
 
 interface CauseMetaData {
   title: string;
@@ -83,7 +83,7 @@ const Cause: NextPage<{ params: { causeId: number } }> = ({ params: { causeId } 
               {amountNeeded === undefined || amountRaised === undefined ? (
                 <p className="mt-4 lg:mt-2 text-right">Error fetching amounts</p>
               ) : amountNeeded > amountRaised ? (
-                <Donate causeId={causeId} />
+                <DonateButton causeId={causeId} />
               ) : (
                 <p className="mt-4 lg:mt-2 text-right">Fundraising completed 🎉</p>
               )}

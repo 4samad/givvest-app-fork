@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
-export const Donate = ({ causeId }: { causeId: number }) => {
+export const DonateButton = ({ causeId }: { causeId: number }) => {
   const [amount, setAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
