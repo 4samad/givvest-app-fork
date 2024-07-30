@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { Donate } from "./_components/Donate";
 import type { NextPage } from "next";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
@@ -79,20 +80,27 @@ const Cause: NextPage<{ params: { causeId: number } }> = ({ params: { causeId } 
               <p className="text-sm">
                 {amountRaised}ETH of {amountNeeded}ETH
               </p>
-              <div className="mt-8 lg:mt-2 card-actions justify-end">
-                <label className="input inline-flex items-center gap-1 max-w-40">
-                  <span>ETH</span>
-                  <input type="text" placeholder="Enter amount" className="input max-w-full placeholder:text-sm" />
-                </label>
-                <button className="btn btn-primary">Donate Now</button>
-              </div>
+              {amountNeeded === undefined || amountRaised === undefined ? (
+                <p className="mt-4 lg:mt-2 text-right">Error fetching amounts</p>
+              ) : amountNeeded > amountRaised ? (
+                <Donate causeId={causeId} />
+              ) : (
+                <p className="mt-4 lg:mt-2 text-right">Fundraising completed 🎉</p>
+              )}
             </div>
           </div>
         </div>
-        <div className="mt-10 max-w-5xl m-auto">
+        <div className="mt-4 max-w-5xl m-auto px-4">
           <p className="text-xs opacity-50">Fundraiser: {fundraiser}</p>
 
-          <p className="mt-8">{causeMetaData.desc}</p>
+          <p className="mt-8">
+            {causeMetaData.desc.split("\n").map(para => (
+              <>
+                {para}
+                <br />
+              </>
+            ))}
+          </p>
         </div>
       </div>
     </>
