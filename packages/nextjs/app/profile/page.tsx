@@ -1,6 +1,6 @@
 "use client";
 
-import { DonationNFTs } from "./_components/DonationNFTs";
+import { DonationNFTsList } from "./_components/DonationNFTsList";
 import { GivvestCoinBalance } from "./_components/GivvestCoinBalance";
 import type { NextPage } from "next";
 
@@ -16,7 +16,7 @@ const Profile: NextPage = () => {
       </div>
       <div className="pb-24">
         <div className="flex justify-center">
-          <DonationNFTs />
+          <DonationNFTsList />
         </div>
         <div className="mt-40 m-auto max-w-7xl">
           <GivvestCoinBalance />

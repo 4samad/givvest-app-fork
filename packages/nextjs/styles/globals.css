@@ -5,3 +5,32 @@
 body {
   min-height: 100vh;
 }
+
+/* GoldenBadge.css */
+
+.golden-shine {
+  background-color: #b99e00;
+  display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(
+    135deg,
+    #ffd700 25%,
+    #ffc700 25%,
+    #ffc700 50%,
+    #ffd700 50%,
+    #ffd700 75%,
+    #ffc700 75%,
+    #ffc700
+  );
+  background-size: 400%;
+  animation: subtle-shine 2s linear infinite;
+}
+
+@keyframes subtle-shine {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
