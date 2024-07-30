@@ -24,7 +24,7 @@ export const MakePermanentButton = ({ tokenId }: { tokenId: number }) => {
         },
       );
     } catch (e) {
-      console.error("Error processing donation", e);
+      console.error("Error processing request", e);
       setIsProcessing(false);
     }
   };
