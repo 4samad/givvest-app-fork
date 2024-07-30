@@ -49,7 +49,7 @@ export const CauseNFT = ({ causeId }: { causeId: number }) => {
 
   useEffect(() => {
     if (tokenURI) {
-      fetch(tokenURI.replace("ipfs://", "https://ipfs.io/ipfs/"))
+      fetch(tokenURI)
         .then(res => res.json())
         .then(data => setCauseMetaData(data))
         .catch(error => console.error("Error fetching metadata:", error));
