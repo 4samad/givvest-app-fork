@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { DonateButton } from "./_components/DonateButton";
 import type { NextPage } from "next";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
-import { DonateButton } from "./_components/DonateButton";
 
 interface CauseMetaData {
   title: string;
