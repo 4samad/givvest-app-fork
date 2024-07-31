@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ListForRedemptionButton } from "./ListForRedemptionButton";
 import { MakePermanentButton } from "./MakePermanentButton";
+// import { UnListForRedemptionButton } from "./UnListForRedemptionButton";
 import { useAccount } from "wagmi";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
@@ -13,10 +15,27 @@ interface CauseMetaData {
   image: string;
 }
 
-export const DonationNFT = ({ tokenId }: { tokenId: number }) => {
+interface DonationNFTProps {
+  tokenIndex: number;
+  selectedTab: string;
+}
+
+export const DonationNFT = ({ tokenIndex, selectedTab }: DonationNFTProps) => {
   const { address } = useAccount();
 
   const [causeMetaData, setCauseMetaData] = useState<CauseMetaData | null>(null);
+
+  const {
+    data: tokenId,
+    error: tokenIdLoadingError,
+    isLoading: isTokenIdLoading,
+  } = useScaffoldReadContract({
+    contractName: "Givvest",
+    functionName: "tokenOfOwnerByIndex",
+    args: [address, BigInt(tokenIndex)],
+  });
+  // Returns tokenData as [amount, causeId, listedForRedemption]
+  console.log({ tokenId, tokenIdLoadingError, isTokenIdLoading });
 
   const {
     data: tokenData,
@@ -25,7 +44,7 @@ export const DonationNFT = ({ tokenId }: { tokenId: number }) => {
   } = useScaffoldReadContract({
     contractName: "Givvest",
     functionName: "donationNFTs",
-    args: [BigInt(tokenId)],
+    args: [tokenId ?? undefined],
   });
   // Returns tokenData as [amount, causeId, listedForRedemption]
   console.log({ tokenData, tokenDataLoadingError, isTokenDataLoading });
@@ -39,7 +58,7 @@ export const DonationNFT = ({ tokenId }: { tokenId: number }) => {
   const { data: isPermanent } = useScaffoldReadContract({
     contractName: "Givvest",
     functionName: "isPermanent",
-    args: [BigInt(tokenId)],
+    args: [tokenId ?? undefined],
   });
   console.log("isPermanent", isPermanent);
 
@@ -50,7 +69,7 @@ export const DonationNFT = ({ tokenId }: { tokenId: number }) => {
   } = useScaffoldReadContract({
     contractName: "GivvestCause",
     functionName: "tokenURI",
-    args: [causeId ? BigInt(causeId) : undefined],
+    args: [causeId ?? undefined],
   });
   console.log({ causeTokenURI, causeTokenURILoadingError, isCauseTokenURILoading });
 
@@ -77,6 +96,16 @@ export const DonationNFT = ({ tokenId }: { tokenId: number }) => {
 
   if (!tokenData || !causeMetaData) return null;
 
+  // Filter logic based on selected tab
+  if (
+    (selectedTab === "Listed" && !listedForRedemption) ||
+    (selectedTab === "Unlisted" && (listedForRedemption || isPermanent)) ||
+    (selectedTab === "Permanent" && !isPermanent) ||
+    !amount
+  ) {
+    return null;
+  }
+
   return (
     <div
       className="min-h-96 w-56 flex flex-col justify-between gap-4 bg-black p-4"
@@ -92,11 +121,11 @@ export const DonationNFT = ({ tokenId }: { tokenId: number }) => {
           <p className="opacity-80 mt-1">{truncateAddress(address)}</p>
         </div>
         <div>
-          <div className="badge my-1">#{tokenId}</div>
+          <div className="badge my-1">#{Number(tokenId)}</div>
         </div>
       </div>
       <div>
-        <h1 className="text-4xl">
+        <h1 className="text-4xl my-1">
           {amount}ETH{" "}
           {isPermanent && (
             <div className="rounded-full golden-shine my-1 text-amber-800">
@@ -117,8 +146,9 @@ export const DonationNFT = ({ tokenId }: { tokenId: number }) => {
             </div>
           )}
         </h1>
+        {listedForRedemption && <div className="badge badge-primary my-1 text-xs">Listed for redemption</div>}
         <div className="flex">
-          <p className="mt-2 opacity-80 grow">Donated to {truncateTitle(causeMetaData.title)}</p>
+          <p className="mt-1 opacity-80 grow">Donated to {truncateTitle(causeMetaData.title)}</p>
           <div className="dropdown dropdown-top dropdown-end self-end flex -mr-2">
             <EllipsisVerticalIcon
               tabIndex={0}
@@ -126,16 +156,23 @@ export const DonationNFT = ({ tokenId }: { tokenId: number }) => {
               className="h-8 rounded-full hover:bg-[rgba(255,255,255,0.06)]"
             />
             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-              {!isPermanent && (
+              {!(isPermanent || listedForRedemption) && (
                 <>
                   <li>
-                    <MakePermanentButton tokenId={tokenId} />
+                    <MakePermanentButton tokenId={Number(tokenId)} />
                   </li>
                   <li>
-                    <button>List for redemption</button>
+                    <ListForRedemptionButton tokenId={Number(tokenId)} />
                   </li>
                 </>
               )}
+              {/*
+                listedForRedemption && (
+                  <li>
+                    <UnListForRedemptionButton tokenId={tokenId} />
+                  </li>
+                )
+              */}
               <li>
                 <Link href={`/explore/${causeId}`}>See the cause</Link>
               </li>
