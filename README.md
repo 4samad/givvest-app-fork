@@ -3,10 +3,55 @@
 
 # Givvest App
 
+Givvest is a fundraising platform that leverages NFTs to transform charitable donations into assets, ensuring both philanthropic impact and personal financial security.
 
-Givvest is an fundraising platform that leverages NFTs to transform charitable donations into assets, ensuring both philanthropic impact and personal financial security.
+## How it works
 
-<a  href="https://givvest.io">**Website**</a>🔗
+### Core Features
+
+1. **Dynamic Donation NFTs**
+  - When you donate to a cause, you receive a Donation NFT
+  - This NFT represents your contribution and can be redeemed later if needed
+  - Each NFT tracks the original cause and donation amount
+
+2. **Safety Net Mechanism**
+  - If a donor faces financial difficulties, they can list their Donation NFT for redemption
+  - New donors can choose to take over existing donations
+  - When this happens, the original donor receives their funds back, and the new donor gets a fresh Donation NFT
+
+3. **Permanent Donations & Governance**
+  - Donors can choose to make their donations permanent
+  - Converting to permanent status earns Givvest Coins
+  - These coins grant voting rights in platform governance
+
+### New Feature: Yield Donation
+
+We've introduced a new way to support causes through yield donations:
+
+1. **Stake USDe**
+  - Deposit USDe (Ethena's stablecoin) into the protocol
+  - Your deposit earns yield through Ethena's staking mechanism
+
+2. **Earn While Giving**
+  - Your initial deposit remains secure and can be withdrawn
+  - The yield generated is automatically donated to your chosen cause
+  - Start with as little as 1 USDe
+
+3. **Flexible Control**
+  - Choose any active cause for your yield donations
+  - Track your total contributions and impact
+
+### Benefits
+
+- **Risk-Free Giving**: Support causes without compromising your financial security
+- **Sustainable Impact**: Generate continuous donations through yield
+- **Community Governance**: Shape the platform's future through permanent donations
+- **Transparent Tracking**: Monitor your contributions and their impact in real-time
+
+### Technical Features
+
+- Built on Ethereum using ERC721 for Donation NFTs
+- Integration with Ethena protocol for yield generation
 
 ---
 
