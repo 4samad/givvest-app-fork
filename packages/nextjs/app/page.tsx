@@ -16,7 +16,7 @@ const Home: NextPage = () => {
             src="/ethena-bg.png"
             alt="Ethena style background"
             fill
-            className="absolute inset-0 object-cover -z-10"
+            className="absolute inset-0 object-cover bg-black -z-10"
           />
           <div>
             <h6 className="text-sm text-secondary">NEW FEATURE</h6>
