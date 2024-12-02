@@ -1,12 +1,33 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import type { NextPage } from "next";
 
 const Home: NextPage = () => {
   return (
     <>
-      <div className="py-40 text-center">
+      <div className="mt-20 m-auto px-4 max-w-5xl">
+        <div
+          id="ethena-card"
+          className="relative py-24 px-4 md:px-8 lg:px-16 rounded-3xl overflow-clip grid grid-cols-1 md:grid-cols-2"
+        >
+          <Image
+            src="/ethena-bg.png"
+            alt="Ethena style background"
+            fill
+            className="absolute inset-0 object-cover -z-10"
+          />
+          <div>
+            <h6 className="text-sm text-secondary">NEW FEATURE</h6>
+            <h2 className="text-5xl font-bold">Donate Without Spending: Let Your Idle Money Do Good</h2>
+            <Link href="/yield-donation" className="btn btn-secondary mt-8 shadow-lg shadow-blue-500">
+              Explore Yield Donation
+            </Link>
+          </div>
+        </div>
+      </div>
+      <div className="py-32 text-center">
         <h1 className="text-7xl font-black">Give with Courage</h1>
         <Link href="/explore" className="btn btn-primary mt-8">
           Explore Causes

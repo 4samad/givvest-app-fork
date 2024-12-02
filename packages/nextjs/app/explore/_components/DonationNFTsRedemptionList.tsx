@@ -17,7 +17,9 @@ export const DonationNFTsRedemptionList = () => {
   return (
     <div className="max-w-7xl overflow-hidden flex gap-8 flex-wrap justify-center">
       {Array.from({ length: Number(tokenCount) }).map((_, i) => (
-        <DonationNFT key={i} tokenId={i} isForRedemption={true} />
+        <>
+          <DonationNFT key={i} tokenId={i} isForRedemption={true} />
+        </>
       ))}
     </div>
   );

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ListForRedemptionButton } from "./ListForRedemptionButton";
 import { MakePermanentButton } from "./MakePermanentButton";
+import { formatEther } from "viem";
 // import { UnListForRedemptionButton } from "./UnListForRedemptionButton";
 import { useAccount } from "wagmi";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
@@ -51,7 +52,7 @@ export const DonationNFT = ({ tokenIndex, selectedTab }: DonationNFTProps) => {
   let amount, causeId, listedForRedemption;
   if (tokenData) {
     [amount, causeId, listedForRedemption] = tokenData;
-    amount = Number(amount);
+    amount = formatEther(amount);
     console.log("listedForRedemption: ", listedForRedemption);
   }
 
@@ -126,7 +127,7 @@ export const DonationNFT = ({ tokenIndex, selectedTab }: DonationNFTProps) => {
       </div>
       <div>
         <h1 className="text-4xl my-1">
-          {amount}ETH{" "}
+          ${amount}{" "}
           {isPermanent && (
             <div className="rounded-full golden-shine my-1 text-amber-800">
               <svg

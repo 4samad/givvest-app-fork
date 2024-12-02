@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   11155111: {
     Givvest: {
-      address: "0x77758dBE12254dA4EF6dF41CfF04bcFc7cA37Ee6",
+      address: "0xD44a867df61dde1B0108C69cDCC675d1c369dB76",
       abi: [
         {
           inputs: [
@@ -24,6 +24,11 @@ const deployedContracts = {
             {
               internalType: "address",
               name: "givvestCauseAddress",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "usdeAddress",
               type: "address",
             },
           ],
@@ -174,6 +179,17 @@ const deployedContracts = {
             },
           ],
           name: "OwnableUnauthorizedAccount",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+          ],
+          name: "SafeERC20FailedOperation",
           type: "error",
         },
         {
@@ -346,6 +362,56 @@ const deployedContracts = {
           type: "event",
         },
         {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "donor",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "causeId",
+              type: "uint256",
+            },
+          ],
+          name: "YieldDonation",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "processor",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "bool",
+              name: "authorized",
+              type: "bool",
+            },
+          ],
+          name: "YieldProcessorUpdated",
+          type: "event",
+        },
+        {
           inputs: [
             {
               internalType: "address",
@@ -361,6 +427,25 @@ const deployedContracts = {
           name: "approve",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "authorizedYieldProcessors",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -399,17 +484,27 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
               name: "causeId",
               type: "uint256",
             },
           ],
           name: "donateToCause",
           outputs: [],
-          stateMutability: "payable",
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
           inputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
             {
               internalType: "uint256",
               name: "tokenId",
@@ -418,7 +513,7 @@ const deployedContracts = {
           ],
           name: "donateToDonationNFT",
           outputs: [],
-          stateMutability: "payable",
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -610,6 +705,29 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "address",
+              name: "donor",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "causeId",
+              type: "uint256",
+            },
+          ],
+          name: "processYieldDonation",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "renounceOwnership",
           outputs: [],
@@ -681,6 +799,24 @@ const deployedContracts = {
             },
           ],
           name: "setApprovalForAll",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "processor",
+              type: "address",
+            },
+            {
+              internalType: "bool",
+              name: "authorized",
+              type: "bool",
+            },
+          ],
+          name: "setYieldProcessor",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -841,37 +977,36 @@ const deployedContracts = {
           stateMutability: "nonpayable",
           type: "function",
         },
+        {
+          inputs: [],
+          name: "usdeToken",
+          outputs: [
+            {
+              internalType: "contract IUSDe",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
       ],
       inheritedFunctions: {
-        approve:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        balanceOf:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        getApproved:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        isApprovedForAll:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        approve: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        balanceOf: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        getApproved: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        isApprovedForAll: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
         name: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        ownerOf:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        safeTransferFrom:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        setApprovalForAll:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        supportsInterface:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        symbol:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        tokenURI:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        transferFrom:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        tokenByIndex:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
-        tokenOfOwnerByIndex:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
-        totalSupply:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+        ownerOf: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        safeTransferFrom: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        setApprovalForAll: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        supportsInterface: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        symbol: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        tokenURI: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        transferFrom: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        tokenByIndex: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+        tokenOfOwnerByIndex: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+        totalSupply: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
         burn: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
         owner: "@openzeppelin/contracts/access/Ownable.sol",
         renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
@@ -879,7 +1014,7 @@ const deployedContracts = {
       },
     },
     GivvestCause: {
-      address: "0x88f014bebEDd2ca5DE71845da1c606fC625f7237",
+      address: "0xF44242616C2C530679c59f89591fF756281c6BaF",
       abi: [
         {
           inputs: [
@@ -1916,34 +2051,21 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        approve:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        balanceOf:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        getApproved:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        isApprovedForAll:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        approve: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        balanceOf: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        getApproved: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        isApprovedForAll: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
         name: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        ownerOf:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        safeTransferFrom:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        setApprovalForAll:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        ownerOf: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        safeTransferFrom: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        setApprovalForAll: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
         supportsInterface: "@openzeppelin/contracts/access/AccessControl.sol",
-        symbol:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        tokenURI:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        transferFrom:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        tokenByIndex:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
-        tokenOfOwnerByIndex:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
-        totalSupply:
-          "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+        symbol: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        tokenURI: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        transferFrom: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        tokenByIndex: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+        tokenOfOwnerByIndex: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+        totalSupply: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
         burn: "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
         DEFAULT_ADMIN_ROLE: "@openzeppelin/contracts/access/AccessControl.sol",
         getRoleAdmin: "@openzeppelin/contracts/access/AccessControl.sol",
@@ -1954,7 +2076,7 @@ const deployedContracts = {
       },
     },
     GivvestCoin: {
-      address: "0x7e7ce608040d9a38498A66d047a3C6A804A20B0f",
+      address: "0xa63A3E2399283cf3b62D75516D5D8Ab8208E4138",
       abi: [
         {
           inputs: [
@@ -2856,26 +2978,17 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {
-        allowance:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        approve:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        balanceOf:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        decimals:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        allowance: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        approve: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        balanceOf: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        decimals: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
         name: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        symbol:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        totalSupply:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        transfer:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        transferFrom:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        symbol: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        totalSupply: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        transfer: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        transferFrom: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
         burn: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        burnFrom:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+        burnFrom: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
         DEFAULT_ADMIN_ROLE: "@openzeppelin/contracts/access/AccessControl.sol",
         getRoleAdmin: "@openzeppelin/contracts/access/AccessControl.sol",
         grantRole: "@openzeppelin/contracts/access/AccessControl.sol",
@@ -2883,14 +2996,366 @@ const deployedContracts = {
         renounceRole: "@openzeppelin/contracts/access/AccessControl.sol",
         revokeRole: "@openzeppelin/contracts/access/AccessControl.sol",
         supportsInterface: "@openzeppelin/contracts/access/AccessControl.sol",
-        DOMAIN_SEPARATOR:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        eip712Domain:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        nonces:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
-        permit:
-          "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        DOMAIN_SEPARATOR: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        eip712Domain: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        nonces: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+        permit: "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol",
+      },
+    },
+    YieldDonation: {
+      address: "0xb1EEa80fe927da9e961C92336C73735BE25709aF",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_usde",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_susde",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_givvest",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "OwnableInvalidOwner",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "OwnableUnauthorizedAccount",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ReentrancyGuardReentrantCall",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "spender",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "currentAllowance",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "requestedDecrease",
+              type: "uint256",
+            },
+          ],
+          name: "SafeERC20FailedDecreaseAllowance",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "token",
+              type: "address",
+            },
+          ],
+          name: "SafeERC20FailedOperation",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "cooldownEnd",
+              type: "uint256",
+            },
+          ],
+          name: "CooldownStarted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "Deposited",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "previousOwner",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "depositAmount",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "yieldAmount",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "causeId",
+              type: "uint256",
+            },
+          ],
+          name: "Withdrawn",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "deposit",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getStakeInfo",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "depositAmount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "currentValue",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "yieldAmount",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "cooldownStarted",
+              type: "bool",
+            },
+            {
+              internalType: "uint256",
+              name: "cooldownEnd",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "givvest",
+          outputs: [
+            {
+              internalType: "contract IGivvest",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "renounceOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "stakes",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "depositAmount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "shares",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "cooldownEnd",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "cooldownStarted",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "startCooldown",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "susde",
+          outputs: [
+            {
+              internalType: "contract ISUSDe",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "usde",
+          outputs: [
+            {
+              internalType: "contract IERC20",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "causeId",
+              type: "uint256",
+            },
+          ],
+          name: "withdrawAndDonate",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {
+        owner: "@openzeppelin/contracts/access/Ownable.sol",
+        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
       },
     },
   },

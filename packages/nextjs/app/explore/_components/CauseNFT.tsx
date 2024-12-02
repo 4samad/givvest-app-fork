@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { formatEther } from "viem";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 interface CauseMetaData {
@@ -40,8 +41,8 @@ export const CauseNFT = ({ causeId }: { causeId: number }) => {
   let fundraiser, amountNeeded, amountRaised, isActive;
   if (causeData) {
     [fundraiser, amountNeeded, amountRaised, isActive] = causeData;
-    amountNeeded = Number(amountNeeded);
-    amountRaised = Number(amountRaised);
+    amountNeeded = formatEther(amountNeeded);
+    amountRaised = formatEther(amountRaised);
   }
   console.log(fundraiser, amountNeeded, amountRaised, isActive);
 
@@ -82,7 +83,7 @@ export const CauseNFT = ({ causeId }: { causeId: number }) => {
         <p>{truncateDescription(causeMetaData.desc)}</p>
         <progress className="progress progress-success mt-2" value={amountRaised} max={amountNeeded}></progress>
         <p className="text-sm">
-          {amountRaised}ETH of {amountNeeded}ETH
+          ${amountRaised} of ${amountNeeded}
         </p>
         <div className="card-actions justify-end">
           <Link href={`/explore/${causeId}`} className="btn btn-primary">

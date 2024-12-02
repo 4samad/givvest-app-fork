@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { DonateButton } from "./_components/DonateButton";
 import type { NextPage } from "next";
+import { formatEther } from "viem";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 interface CauseMetaData {
@@ -41,8 +42,8 @@ const Cause: NextPage<{ params: { causeId: number } }> = ({ params: { causeId } 
   let fundraiser, amountNeeded, amountRaised, isActive;
   if (causeData) {
     [fundraiser, amountNeeded, amountRaised, isActive] = causeData;
-    amountNeeded = Number(amountNeeded);
-    amountRaised = Number(amountRaised);
+    amountNeeded = formatEther(amountNeeded);
+    amountRaised = formatEther(amountRaised);
   }
   console.log(fundraiser, amountNeeded, amountRaised, isActive);
 
@@ -78,11 +79,11 @@ const Cause: NextPage<{ params: { causeId: number } }> = ({ params: { causeId } 
             <div>
               <progress className="progress progress-success mt-2" value={amountRaised} max={amountNeeded}></progress>
               <p className="text-sm">
-                {amountRaised}ETH of {amountNeeded}ETH
+                ${amountRaised} of ${amountNeeded}
               </p>
               {amountNeeded === undefined || amountRaised === undefined ? (
                 <p className="mt-4 lg:mt-2 text-right">Error fetching amounts</p>
-              ) : amountNeeded > amountRaised ? (
+              ) : Number(amountNeeded) > Number(amountRaised) ? (
                 <DonateButton causeId={causeId} />
               ) : (
                 <p className="mt-4 lg:mt-2 text-right">Fundraising completed 🎉</p>

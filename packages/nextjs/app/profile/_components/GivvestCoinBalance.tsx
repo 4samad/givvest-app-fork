@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
@@ -26,7 +27,13 @@ export const GivvestCoinBalance = () => {
       <div className="card-body">
         <h1 className="card-title font-light">YOUR GIVVEST COIN BALANCE:</h1>
         <p className="text-4xl lg:text-7xl">
-          {isLoading ? "Loading..." : error ? "Error loading" : totalCounter ? totalCounter + " GVC" : "0 GVC"}
+          {isLoading
+            ? "Loading..."
+            : error
+            ? "Error loading"
+            : totalCounter
+            ? formatEther(totalCounter) + " GVC"
+            : "0 GVC"}
         </p>
         <div className="card-actions justify-end">
           <button className="btn" onClick={() => HowToGetModal.current?.showModal()}>

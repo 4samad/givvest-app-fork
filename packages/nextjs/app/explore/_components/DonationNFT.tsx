@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { formatEther } from "viem";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 
 interface CauseMetaData {
   title: string;
@@ -67,16 +69,26 @@ export const DonationNFT = ({ tokenId, isForRedemption = false }: DonationNFTPro
 
   const [isProcessingDonation, setIsProcessingDonation] = useState(false);
 
-  const { writeContractAsync, isPending } = useScaffoldWriteContract("Givvest");
+  const { writeContractAsync: writeGivvestAsync, isPending: isGivvestPending } = useScaffoldWriteContract("Givvest");
+  const { writeContractAsync: writeUsdeAsync, isPending: isUsdePending } = useScaffoldWriteContract("USDe");
+  const { data: givvestContract } = useDeployedContractInfo("Givvest");
 
   const handleDonateAmount = async () => {
+    if (!givvestContract?.address || !amount) return;
+
     setIsProcessingDonation(true);
     try {
-      await writeContractAsync(
+      // First approve USDe transfer
+      await writeUsdeAsync({
+        functionName: "approve",
+        args: [givvestContract.address, amount], // amount is already in wei from tokenData
+      });
+
+      // Then make the donation
+      await writeGivvestAsync(
         {
           functionName: "donateToDonationNFT",
-          args: [BigInt(tokenId)],
-          value: amount,
+          args: [BigInt(tokenId), amount],
         },
         {
           onBlockConfirmation: txnReceipt => {
@@ -141,7 +153,7 @@ export const DonationNFT = ({ tokenId, isForRedemption = false }: DonationNFTPro
         </div>
         <div>
           <h1 className="text-4xl my-1">
-            {Number(amount)}ETH{" "}
+            ${formatEther(amount)}{" "}
             {isPermanent && (
               <div className="rounded-full golden-shine my-1 text-amber-800">
                 <svg
@@ -171,8 +183,12 @@ export const DonationNFT = ({ tokenId, isForRedemption = false }: DonationNFTPro
           <Link href={`/explore/${causeId}`} className="btn">
             See Cause
           </Link>
-          <button className="btn btn-primary" onClick={handleDonateAmount} disabled={isPending || isProcessingDonation}>
-            {isPending || isProcessingDonation ? (
+          <button
+            className="btn btn-primary"
+            onClick={handleDonateAmount}
+            disabled={isGivvestPending || isUsdePending || isProcessingDonation}
+          >
+            {isGivvestPending || isUsdePending || isProcessingDonation ? (
               <span className="loading loading-spinner loading-sm"></span>
             ) : (
               "Donate Now"

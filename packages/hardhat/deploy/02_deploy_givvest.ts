@@ -2,6 +2,8 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Contract } from "ethers";
 
+const usdeAddress = "0xf805ce4F96e0EdD6f0b6cd4be22B34b92373d696";
+
 /**
  * Deploys the Givvest contract using the deployer account and
  * constructor arguments set to the deployer address, GivvestCoin address, and GivvestCause address
@@ -30,7 +32,7 @@ const deployGivvest: DeployFunction = async function (hre: HardhatRuntimeEnviron
   await deploy("Givvest", {
     from: deployer,
     // Contract constructor arguments
-    args: [deployer, givvestCoin.address, givvestCause.address],
+    args: [deployer, givvestCoin.address, givvestCause.address, usdeAddress],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.

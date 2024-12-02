@@ -1,228 +1,251 @@
 // SPDX-License-Identifier: MIT
-// Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 interface IGivvestCause {
-	/**
-	 * @notice Raise a specific amount for a cause identified by the tokenId.
-	 * @param tokenId The ID of the cause token.
-	 * @param amount The amount to raise for the cause.
-	 */
-	function raiseAmount(uint256 tokenId, uint256 amount) external;
-
-	/**
-	 * @notice Get the address of the fundraiser associated with a cause token.
-	 * @param tokenId The ID of the cause token.
-	 * @return The address of the fundraiser.
-	 */
-	function getFundraiser(uint256 tokenId) external view returns (address);
+    function raiseAmount(uint256 tokenId, uint256 amount) external;
+    function getFundraiser(uint256 tokenId) external view returns (address);
 }
 
 interface IGivvestCoin {
-	/**
-	 * @notice Mint Givvest coins to a specified address.
-	 * @param to The address to receive the minted coins.
-	 * @param amount The amount of coins to mint.
-	 */
-	function mint(address to, uint256 amount) external;
+    function mint(address to, uint256 amount) external;
+}
+
+interface IUSDe is IERC20 {
+    function decimals() external view returns (uint8);
 }
 
 /**
  * @title Givvest
- * @dev Main contract for the Givvest platform, which allows users to donate to causes and receive NFT representations of their donations.
+ * @dev Main contract for the Givvest platform, which allows users to donate USDe to causes and receive NFT representations of their donations.
  */
 contract Givvest is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
-	IGivvestCause public givvestCauseContract;
-	IGivvestCoin public givvestCoinContract;
+    using SafeERC20 for IERC20;
 
-	struct DonationNFT {
-		uint256 amount;
-		uint256 causeId;
-		bool listedForRedemption;
-	}
+    IGivvestCause public givvestCauseContract;
+    IGivvestCoin public givvestCoinContract;
+    IUSDe public usdeToken;
 
-	uint256 public tokenCount;
+    struct DonationNFT {
+        uint256 amount;
+        uint256 causeId;
+        bool listedForRedemption;
+    }
 
-	// Mapping from token ID to DonationNFT
-	mapping(uint256 => DonationNFT) public donationNFTs;
+    uint256 public tokenCount;
 
-	// Mapping from token ID to permanence status
-	mapping(uint256 => bool) public isPermanent;
+    // Mapping from token ID to DonationNFT
+    mapping(uint256 => DonationNFT) public donationNFTs;
 
-	// Events for logging important actions
-	event DonationMinted(
-		address indexed donor,
-		uint256 tokenId,
-		uint256 amount,
-		uint256 causeId
-	);
-	event DonationPermanent(
-		address indexed donor,
-		uint256 tokenId,
-		uint256 amount
-	);
-	event DonationListed(address indexed donor, uint256 tokenId);
+    // Mapping from token ID to permanence status
+    mapping(uint256 => bool) public isPermanent;
 
-	modifier onlyDonor(uint256 tokenId) {
-		require(msg.sender == ownerOf(tokenId), "Not the donor");
-		_;
-	}
+    // Mapping of authorized yield processors
+    mapping(address => bool) public authorizedYieldProcessors;
 
-	modifier notPermanentNFT(uint256 tokenId) {
-		require(!isPermanent[tokenId], "It is a permanent Donation");
-		_;
-	}
+    // Events for logging important actions
+    event DonationMinted(
+        address indexed donor,
+        uint256 tokenId,
+        uint256 amount,
+        uint256 causeId
+    );
+    event DonationPermanent(
+        address indexed donor,
+        uint256 tokenId,
+        uint256 amount
+    );
+    event DonationListed(address indexed donor, uint256 tokenId);
+    event YieldDonation(
+        address indexed donor,
+        uint256 tokenId,
+        uint256 amount,
+        uint256 causeId
+    );
+    event YieldProcessorUpdated(address processor, bool authorized);
 
-	modifier notZeroValue() {
-		require(msg.value > 0, "Donation must be greater than zero");
-		_;
-	}
+    modifier onlyDonor(uint256 tokenId) {
+        require(msg.sender == ownerOf(tokenId), "Not the donor");
+        _;
+    }
 
-	/**
-	 * @dev Initializes the contract with the given addresses.
-	 * @param initialOwner The address of the initial owner.
-	 * @param givvestCoinAddress The address of the GivvestCoin contract.
-	 * @param givvestCauseAddress The address of the GivvestCause contract.
-	 */
-	constructor(
-		address initialOwner,
-		address givvestCoinAddress,
-		address givvestCauseAddress
-	) ERC721("GivvestNFT", "GVNFT") Ownable(initialOwner) {
-		givvestCauseContract = IGivvestCause(givvestCauseAddress);
-		givvestCoinContract = IGivvestCoin(givvestCoinAddress);
-	}
+    modifier notPermanentNFT(uint256 tokenId) {
+        require(!isPermanent[tokenId], "It is a permanent Donation");
+        _;
+    }
 
-	/**
-	 * @dev Internal function to mint a new DonationNFT.
-	 * @param causeId The ID of the cause associated with the donation.
-	 */
-	function _mintDonationNFT(uint256 causeId) internal {
-		uint256 tokenId = tokenCount++;
-		_safeMint(msg.sender, tokenId);
+    /**
+     * @dev Initializes the contract with the given addresses.
+     */
+    constructor(
+        address initialOwner,
+        address givvestCoinAddress,
+        address givvestCauseAddress,
+        address usdeAddress
+    ) ERC721("GivvestNFT", "GVNFT") Ownable(initialOwner) {
+        givvestCauseContract = IGivvestCause(givvestCauseAddress);
+        givvestCoinContract = IGivvestCoin(givvestCoinAddress);
+        usdeToken = IUSDe(usdeAddress);
+    }
 
-		donationNFTs[tokenId] = DonationNFT({
-			amount: msg.value,
-			causeId: causeId,
-			listedForRedemption: false
-		});
+    /**
+     * @notice Set or revoke a yield processor's authorization
+     * @param processor Address of the yield processor
+     * @param authorized True to authorize, false to revoke
+     */
+    function setYieldProcessor(address processor, bool authorized) external onlyOwner {
+        require(processor != address(0), "Invalid processor address");
+        authorizedYieldProcessors[processor] = authorized;
+        emit YieldProcessorUpdated(processor, authorized);
+    }
 
-		emit DonationMinted(msg.sender, tokenId, msg.value, causeId);
-	}
+    /**
+     * @dev Internal function to mint a new DonationNFT.
+     */
+    function _mintDonationNFT(uint256 amount, uint256 causeId) internal {
+        uint256 tokenId = tokenCount++;
+        _safeMint(msg.sender, tokenId);
 
-	/**
-	 * @notice Donate to a specific cause and receive a DonationNFT.
-	 * @param causeId The ID of the cause to donate to.
-	 */
-	function donateToCause(uint256 causeId) public payable notZeroValue {
-		// Check
-		try givvestCauseContract.raiseAmount(causeId, msg.value) {
-			// Effects
-			_mintDonationNFT(causeId);
+        donationNFTs[tokenId] = DonationNFT({
+            amount: amount,
+            causeId: causeId,
+            listedForRedemption: false
+        });
 
-			// Interactions
-			address payable fundraiser = payable(
-				givvestCauseContract.getFundraiser(causeId)
-			);
-			(bool success, ) = fundraiser.call{ value: msg.value }("");
-			require(success, "Fund transfer failed");
-		} catch Error(string memory reason) {
-			revert(reason);
-		} catch (bytes memory lowLevelData) {
-			revert(
-				string(
-					abi.encodePacked(
-						"An unknown error occurred: ",
-						lowLevelData
-					)
-				)
-			);
-		}
-	}
+        emit DonationMinted(msg.sender, tokenId, amount, causeId);
+    }
 
-	/**
-	 * @notice Donate to an existing DonationNFT.
-	 * @param tokenId The ID of the DonationNFT to donate to.
-	 */
-	function donateToDonationNFT(
-		uint256 tokenId
-	) public payable notZeroValue notPermanentNFT(tokenId) {
-		// Check
-		require(
-			msg.value <= donationNFTs[tokenId].amount,
-			"Donation amount is more than needed"
-		);
+    /**
+     * @notice Donate USDe to a specific cause and receive a DonationNFT.
+     */
+    function donateToCause(uint256 amount, uint256 causeId) public {
+        require(amount > 0, "Amount must be greater than 0");
 
-		// Effects
-		donationNFTs[tokenId].amount -= msg.value;
-		_mintDonationNFT(donationNFTs[tokenId].causeId);
+        try givvestCauseContract.raiseAmount(causeId, amount) {
+            // Transfer USDe from donor to fundraiser
+            address fundraiser = givvestCauseContract.getFundraiser(causeId);
+            IERC20(address(usdeToken)).safeTransferFrom(msg.sender, fundraiser, amount);
+            
+            // Mint donation NFT
+            _mintDonationNFT(amount, causeId);
+        } catch Error(string memory reason) {
+            revert(reason);
+        } catch (bytes memory lowLevelData) {
+            revert(
+                string(
+                    abi.encodePacked(
+                        "An unknown error occurred: ",
+                        lowLevelData
+                    )
+                )
+            );
+        }
+    }
 
-		// Interactions
-		address payable originalDonor = payable(ownerOf(tokenId));
-		(bool success, ) = originalDonor.call{ value: msg.value }("");
-		require(success, "Transfer to donor failed");
-	}
+    /**
+     * @notice Donate USDe to an existing DonationNFT.
+     */
+    function donateToDonationNFT(
+        uint256 amount,
+        uint256 tokenId
+    ) public notPermanentNFT(tokenId) {
+        require(amount > 0, "Amount must be greater than 0");
+        require(
+            amount <= donationNFTs[tokenId].amount,
+            "Donation amount is more than needed"
+        );
 
-	/**
-	 * @notice List a DonationNFT for redemption.
-	 * @param tokenId The ID of the DonationNFT to list for redemption.
-	 */
-	function listForRedemption(
-		uint256 tokenId
-	) public onlyDonor(tokenId) notPermanentNFT(tokenId) {
-		donationNFTs[tokenId].listedForRedemption = true;
-		emit DonationListed(msg.sender, tokenId);
-	}
+        // Transfer USDe from new donor to original donor
+        address originalDonor = ownerOf(tokenId);
+        IERC20(address(usdeToken)).safeTransferFrom(msg.sender, originalDonor, amount);
 
-	/**
-	 * @notice Make a DonationNFT permanent.
-	 * @param tokenId The ID of the DonationNFT to make permanent.
-	 */
-	function makeDonationPermanent(
-		uint256 tokenId
-	) public onlyDonor(tokenId) notPermanentNFT(tokenId) {
-		donationNFTs[tokenId].listedForRedemption = false;
-		isPermanent[tokenId] = true;
-		givvestCoinContract.mint(msg.sender, donationNFTs[tokenId].amount);
-		emit DonationPermanent(
-			msg.sender,
-			tokenId,
-			donationNFTs[tokenId].amount
-		);
-	}
+        // Update original NFT amount and mint new NFT
+        donationNFTs[tokenId].amount -= amount;
+        _mintDonationNFT(amount, donationNFTs[tokenId].causeId);
+    }
 
-	/**
-	 * @dev Override for `_update` function to ensure compatibility with multiple inheritance.
-	 */
-	function _update(
-		address to,
-		uint256 tokenId,
-		address auth
-	) internal override(ERC721, ERC721Enumerable) returns (address) {
-		return super._update(to, tokenId, auth);
-	}
+    /**
+     * @notice Process a yield donation from authorized yield processors
+     */
+    function processYieldDonation(
+        address donor,
+        uint256 amount,
+        uint256 causeId
+    ) external {
+        require(authorizedYieldProcessors[msg.sender], "Unauthorized yield processor");
+        require(amount > 0, "Amount must be greater than 0");
 
-	/**
-	 * @dev Override for `_increaseBalance` function to ensure compatibility with multiple inheritance.
-	 */
-	function _increaseBalance(
-		address account,
-		uint128 value
-	) internal override(ERC721, ERC721Enumerable) {
-		super._increaseBalance(account, value);
-	}
+        // Transfer USDe from sender to fundraiser
+        address fundraiser = givvestCauseContract.getFundraiser(causeId);
+        IERC20(address(usdeToken)).safeTransferFrom(msg.sender, fundraiser, amount);
 
-	/**
-	 * @dev Override for `supportsInterface` function to ensure compatibility with multiple inheritance.
-	 */
-	function supportsInterface(
-		bytes4 interfaceId
-	) public view override(ERC721, ERC721Enumerable) returns (bool) {
-		return super.supportsInterface(interfaceId);
-	}
+        // Mint permanent NFT for yield donation
+        uint256 tokenId = tokenCount++;
+        _safeMint(donor, tokenId);
+
+        donationNFTs[tokenId] = DonationNFT({
+            amount: amount,
+            causeId: causeId,
+            listedForRedemption: false
+        });
+
+        // Make it permanent immediately
+        isPermanent[tokenId] = true;
+
+        emit YieldDonation(donor, tokenId, amount, causeId);
+    }
+
+    /**
+     * @notice List a DonationNFT for redemption.
+     */
+    function listForRedemption(
+        uint256 tokenId
+    ) public onlyDonor(tokenId) notPermanentNFT(tokenId) {
+        donationNFTs[tokenId].listedForRedemption = true;
+        emit DonationListed(msg.sender, tokenId);
+    }
+
+    /**
+     * @notice Make a DonationNFT permanent.
+     */
+    function makeDonationPermanent(
+        uint256 tokenId
+    ) public onlyDonor(tokenId) notPermanentNFT(tokenId) {
+        donationNFTs[tokenId].listedForRedemption = false;
+        isPermanent[tokenId] = true;
+        givvestCoinContract.mint(msg.sender, donationNFTs[tokenId].amount);
+        emit DonationPermanent(
+            msg.sender,
+            tokenId,
+            donationNFTs[tokenId].amount
+        );
+    }
+
+    // Required overrides for ERC721Enumerable
+    function _update(
+        address to,
+        uint256 tokenId,
+        address auth
+    ) internal override(ERC721, ERC721Enumerable) returns (address) {
+        return super._update(to, tokenId, auth);
+    }
+
+    function _increaseBalance(
+        address account,
+        uint128 value
+    ) internal override(ERC721, ERC721Enumerable) {
+        super._increaseBalance(account, value);
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721, ERC721Enumerable) returns (bool) {
+        return super.supportsInterface(interfaceId);
+    }
 }
