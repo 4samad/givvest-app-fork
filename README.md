@@ -9,7 +9,18 @@ Givvest is an fundraising platform that leverages NFTs to transform charitable d
 <a  href="https://givvest.io">**Website**</a>🔗
 
 ---
+
+## How to set up
+
+1. Clone this repo & ```yarn install```
+2. copy .env.example to .env and fill in your details in both ```packages/hardhat``` and ```packages/nextjs```.
+2. deploy contract to your desired network using ```yarn deploy --network <network_name>```
+3. run ```yarn start``` to start the nextjs app at ```localhost:3000```.
+4. go to ```localhost:3000/debug``` to see the contracts debug page. Go to Givvest contract and add the Yield Donation contract address to authorized yield processors. (temp workaround, will fix soon).
+5. connect your wallet to the app and start using it! 🎉
   
+---
+
 
 ⚙️ Built using [**Scaffold-ETH 2**]() NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
 
